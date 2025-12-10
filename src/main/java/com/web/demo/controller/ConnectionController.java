@@ -2,10 +2,10 @@ package com.web.demo.controller;
 
 import com.web.demo.model.ConnectionRequest;
 import com.web.demo.model.RequestStatus;
+import com.web.demo.security.CurrentUser;
 import com.web.demo.service.StudentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,20 +13,26 @@ import org.springframework.web.bind.annotation.*;
 public class ConnectionController {
 
     private final StudentService studentService;
+    private final CurrentUser currentUser;
 
-    public ConnectionController(StudentService studentService) {
+    public ConnectionController(StudentService studentService, CurrentUser currentUser) {
         this.studentService = studentService;
+        this.currentUser = currentUser;
+    }
+
+    private Long getCurrentUserId() {
+        String email = currentUser.getEmail();
+        var student = studentService.getByEmail(email);
+        if (student == null) {
+            throw new IllegalStateException("Authenticated user not found in database");
+        }
+        return student.getId();
     }
 
     @PostMapping("/send")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<ConnectionRequest> send(
-            @RequestParam Long receiverId,
-            Authentication authentication) {
-
-        String senderEmail = authentication.getName();
-        Long senderId = studentService.getByEmail(senderEmail).getId();
-
+    public ResponseEntity<ConnectionRequest> send(@RequestParam Long receiverId) {
+        Long senderId = getCurrentUserId();
         ConnectionRequest cr = studentService.sendConnection(senderId, receiverId);
         return ResponseEntity.ok(cr);
     }
@@ -35,33 +41,28 @@ public class ConnectionController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ConnectionRequest> respond(
             @RequestParam Long requestId,
-            @RequestParam RequestStatus status,
-            Authentication authentication) {
+            @RequestParam RequestStatus status) {
 
-        String userEmail = authentication.getName();
-        Long userId = studentService.getByEmail(userEmail).getId();
-
+        Long userId = getCurrentUserId();
         ConnectionRequest cr = studentService.respondConnection(requestId, status, userId);
         return ResponseEntity.ok(cr);
     }
 
     @GetMapping("/status")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getStatus(
+    public ResponseEntity<String> getStatus(
             @RequestParam Long user1,
             @RequestParam Long user2) {
 
-        return ResponseEntity.ok(studentService.getConnectionStatus(user1, user2));
+        String status = studentService.getConnectionStatus(user1, user2);
+        return ResponseEntity.ok(status);
     }
 
+
     @DeleteMapping("/remove")
-    public ResponseEntity<String> removeConnection(
-            @RequestParam Long student2,
-            Authentication authentication) {
-
-        String userEmail = authentication.getName();
-        Long student1 = studentService.getByEmail(userEmail).getId();
-
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<String> removeConnection(@RequestParam Long student2) {
+        Long student1 = getCurrentUserId();
         String result = studentService.removeConnection(student1, student2);
         return ResponseEntity.ok(result);
     }

@@ -1,6 +1,10 @@
 package com.web.demo.service;
 
 import com.web.demo.model.Student;
+import com.web.demo.dto.MatchRequest;
+import com.web.demo.dto.MatchResponse;
+import com.web.demo.dto.StudentMatch;
+import com.web.demo.dto.StudentMatch;
 import com.web.demo.model.*;
 import com.web.demo.repository.*;
 import com.web.demo.service.StudentServiceImpl;
@@ -139,19 +143,18 @@ public class StudentService implements StudentServiceImpl {
     }
 
     @Override
-    public String getConnectionStatus(Long user1, Long user2) {
-
-        Optional<ConnectionRequest> req =
-                connectionRequestRepository.findTopByConnection(user1, user2);
+    public String getConnectionStatus(Long student1, Long student2) {
+        Optional<ConnectionRequest> req = 
+            connectionRequestRepository.findTopByStudents(student1, student2);
 
         return req.map(r -> "Status: " + r.getStatus())
                 .orElse("No connection history");
     }
 
     @Override
-    @Transactional
+    @Transactional  // ✅ Added missing @Transactional
     public String removeConnection(Long student1, Long student2) {
-
+        // ✅ Fixed: Use correct repository method name
         Optional<ConnectionRequest> existing =
                 connectionRequestRepository.findConnectionBetween(student1, student2);
 
@@ -163,7 +166,94 @@ public class StudentService implements StudentServiceImpl {
             return "NOT_ACCEPTED_YET";
         }
 
-        connectionRequestRepository.deleteConnectionBetween(student1, student2);
+        connectionRequestRepository.deleteConnectionBetween(student1, student2);  // ✅ Now exists
         return "CONNECTION_REMOVED";
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public MatchResponse findBestMatches(Long currentUserId, MatchRequest request) {
+        List<TeachSkill> teacherSkills = teachSkillRepository.findBySkillNameIgnoreCase(request.getSkillName());
+        
+        List<StudentMatch> allMatches = teacherSkills.stream()
+            .map(ts -> buildStudentMatch(currentUserId, ts.getStudent(), ts, request))
+            .filter(match -> match.getMatchScore() >= 50.0)
+            .filter(match -> !match.isAlreadyConnected())
+            .filter(match -> !match.getId().equals(currentUserId))
+            .sorted((a, b) -> Double.compare(b.getMatchScore(), a.getMatchScore()))
+            .toList();
+
+        int pageSize = Math.max(request.getSize() != null ? request.getSize() : 10, 1);
+        int page = Math.max(request.getPage() != null ? request.getPage() : 0, 0);
+        int fromIndex = page * pageSize;
+        
+        List<StudentMatch> paginatedMatches = allMatches.subList(
+            Math.min(fromIndex, allMatches.size()),
+            Math.min(fromIndex + pageSize, allMatches.size())
+        );
+
+        return MatchResponse.builder()
+            .matches(paginatedMatches)
+            .totalPages((int) Math.ceil((double) allMatches.size() / pageSize))
+            .totalElements(allMatches.size())
+            .currentPage(page)
+            .build();
+    }
+
+
+    
+    private StudentMatch buildStudentMatch(Long currentUserId, Student teacher, TeachSkill teachSkill, MatchRequest request) {
+        double score = calculateMatchScore(teacher, teachSkill, request);
+        boolean alreadyConnected = connectionRequestRepository.existsAcceptedConnection(currentUserId, teacher.getId());
+        
+        return StudentMatch.builder()
+            .id(teacher.getId())
+            .name(teacher.getName())
+            .email(teacher.getEmail())
+            .bio(teacher.getBio())
+            .preferredMode(teacher.getPreferredMode())
+            .availableTime(teacher.getAvailableTime())
+            .skillName(teachSkill.getSkillName())
+            .experienceLevel(teachSkill.getExperienceLevel().name())
+            .matchScore(score)
+            .alreadyConnected(alreadyConnected)
+            .build();
+    }
+
+    private double calculateMatchScore(Student teacher, TeachSkill teachSkill, MatchRequest request) {
+        double score = 40.0; // base skill match
+        
+        score += getExperienceScore(teachSkill.getExperienceLevel());
+        if (matchesMode(request.getPreferredMode(), teacher.getPreferredMode())) score += 20.0;
+        if (matchesAvailability(request.getAvailableTime(), teacher.getAvailableTime())) score += 15.0;
+        if (matchesBioKeywords(request.getSkillName(), teacher.getBio())) score += 5.0;
+        
+        return Math.min(score, 100.0);
+    }
+
+    private double getExperienceScore(ExperienceLevel level) {
+        return switch (level) {
+          
+            case ADVANCED -> 15.0;
+            case INTERMEDIATE -> 10.0;
+            case BEGINNER -> 5.0;
+            default -> 0.0;
+        };
+    }
+
+    private boolean matchesMode(String requestMode, String teacherMode) {
+        if (requestMode == null || teacherMode == null) return false;
+        return requestMode.toLowerCase().contains(teacherMode.toLowerCase()) || 
+               teacherMode.toLowerCase().contains(requestMode.toLowerCase()) ||
+               "both".equalsIgnoreCase(requestMode) || "both".equalsIgnoreCase(teacherMode);
+    }
+
+    private boolean matchesAvailability(String requestTime, String teacherTime) {
+        if (requestTime == null || teacherTime == null) return false;
+        return teacherTime.toLowerCase().contains(requestTime.toLowerCase());
+    }
+
+    private boolean matchesBioKeywords(String skill, String bio) {
+        return bio != null && bio.toLowerCase().contains(skill.toLowerCase());
     }
 }

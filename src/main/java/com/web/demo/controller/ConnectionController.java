@@ -1,9 +1,12 @@
 package com.web.demo.controller;
 
 import com.web.demo.model.ConnectionRequest;
+
+
 import com.web.demo.model.RequestStatus;
 import com.web.demo.security.CurrentUser;
 import com.web.demo.service.StudentService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -50,15 +53,12 @@ public class ConnectionController {
 
     @GetMapping("/status")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<String> getStatus(
-            @RequestParam Long user1,
-            @RequestParam Long user2) {
-
-        String status = studentService.getConnectionStatus(user1, user2);
-        return ResponseEntity.ok(status);
-    }
-
-
+    public ResponseEntity<String> getStatus(@RequestParam Long student2) {
+        Long student1 = getCurrentUserId();
+        String result = studentService.getConnectionStatus(student1, student2);
+        return ResponseEntity.ok(result);
+}
+    
     @DeleteMapping("/remove")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> removeConnection(@RequestParam Long student2) {

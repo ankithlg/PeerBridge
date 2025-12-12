@@ -1,5 +1,7 @@
 package com.web.demo.service;
 
+import com.web.demo.dto.MatchRequest;
+import com.web.demo.dto.MatchResponse;
 import com.web.demo.model.*;
 import com.web.demo.model.Student;
 
@@ -26,7 +28,12 @@ public interface StudentServiceImpl {
 
     ConnectionRequest respondConnection(Long requestId, RequestStatus status, Long userId);
 
-    String getConnectionStatus(Long user1, Long user2);
+    String getConnectionStatus(Long student1, Long student2);
 
     String removeConnection(Long student1, Long student2);
+    
+    MatchResponse findBestMatches(Long currentUserId, MatchRequest request);
+
+	
+
 }

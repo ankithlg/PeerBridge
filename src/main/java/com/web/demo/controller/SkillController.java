@@ -1,6 +1,9 @@
 package com.web.demo.controller;
 
+import com.web.demo.dto.MatchRequest;
+import com.web.demo.dto.MatchResponse;
 import com.web.demo.model.LearnSkill;
+
 import com.web.demo.model.TeachSkill;
 import com.web.demo.security.CurrentUser;
 import com.web.demo.service.StudentService;
@@ -22,6 +25,10 @@ public class SkillController {
         this.currentUser = currentUser;
     }
 
+    private Long getCurrentUserId() {
+        String email = currentUser.getEmail();
+        return service.getByEmail(email).getId();
+    }
     @PostMapping("/teach")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<TeachSkill> addTeach(@RequestBody TeachSkill skill) {
@@ -38,11 +45,11 @@ public class SkillController {
         return ResponseEntity.ok(saved);
     }
 
-    @GetMapping("/matches")
+    @PostMapping("/matches")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<TeachSkill>> findMatches(@RequestParam String skill) {
-        String email = currentUser.getEmail();
-        List<TeachSkill> matches = service.findTeachersForSkillExcludingSelf(skill, email);
+    public ResponseEntity<MatchResponse> findMatches(@RequestBody MatchRequest request) {
+        Long currentUserId = getCurrentUserId();
+        MatchResponse matches = service.findBestMatches(currentUserId, request);
         return ResponseEntity.ok(matches);
     }
 }

@@ -20,6 +20,7 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Student> getById(@PathVariable Long id) {
         return service.findById(id)
                 .map(ResponseEntity::ok)
@@ -27,6 +28,7 @@ public class StudentController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Student> update(@PathVariable Long id, @RequestBody Student updates) {
         Student s = service.updateProfile(id, updates);
         return ResponseEntity.ok(s);

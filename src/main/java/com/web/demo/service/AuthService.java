@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 
@@ -52,10 +53,20 @@ public class AuthService {
     }
 
     public AuthResponse login(AuthRequest request) {
-        Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-        );
-        String token = jwtUtil.generateToken(request.getEmail());
-        return new AuthResponse(token);
+        try {
+            authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                    request.getEmail(),
+                    request.getPassword()
+                )
+            );
+
+            String token = jwtUtil.generateToken(request.getEmail());
+            return new AuthResponse(token);
+
+        } catch (BadCredentialsException e) {
+            throw new RuntimeException("Invalid email or password");
+        }
     }
+
 }

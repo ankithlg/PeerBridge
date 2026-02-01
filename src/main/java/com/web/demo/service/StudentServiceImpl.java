@@ -16,7 +16,7 @@ public interface StudentServiceImpl {
 
     Optional<Student> findById(Long id);
 
-    Student updateProfile(Long id, Student updates);
+    Student updateProfile(String email, Student updates);
 
     TeachSkill addTeachSkill(String studentEmail, TeachSkill skill);
 

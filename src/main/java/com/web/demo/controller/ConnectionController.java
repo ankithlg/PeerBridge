@@ -57,7 +57,7 @@ public class ConnectionController {
         Long student1 = getCurrentUserId();
         String result = studentService.getConnectionStatus(student1, student2);
         return ResponseEntity.ok(result);
-}
+    }
     
     @DeleteMapping("/remove")
     @PreAuthorize("isAuthenticated()")

@@ -19,25 +19,20 @@ public class StudentController {
         this.currentUser = currentUser;
     }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Student> getById(@PathVariable Long id) {
-        return service.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
+//    @GetMapping("/{id}")
+//    @PreAuthorize("isAuthenticated()")
+//    public ResponseEntity<Student> getById(@PathVariable Long id) {
+//        return service.findById(id)
+//                .map(ResponseEntity::ok)
+//                .orElse(ResponseEntity.notFound().build());
+//    }
 
-    @PutMapping("/{id}")
+    @PutMapping("/me")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Student> update(@PathVariable Long id, @RequestBody Student updates) {
-        Student s = service.updateProfile(id, updates);
+    public ResponseEntity<Student> update(@RequestBody Student updates) {
+    	String email = currentUser.getEmail();
+        Student s = service.updateProfile(email,updates);
         return ResponseEntity.ok(s);
     }
 
-    @GetMapping("/me")
-    @PreAuthorize("isAuthenticated()")
-    public Student getLoggedInUser() {
-        String email = currentUser.getEmail();
-        return service.getByEmail(email);
-    }
 }

@@ -29,6 +29,7 @@ public class SkillController {
         String email = currentUser.getEmail();
         return service.getByEmail(email).getId();
     }
+    
     @PostMapping("/teach")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<TeachSkill> addTeach(@RequestBody TeachSkill skill) {

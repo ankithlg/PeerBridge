@@ -38,24 +38,4 @@ public class AuthController {
         return ResponseEntity.ok(resp);
     }
 
-    @GetMapping("/me")
-    @PreAuthorize("isAuthenticated()")
-    public Student getCurrentUser(Authentication authentication) {
-        String email = authentication.getName();
-        return studentService.getByEmail(email);
-    }
-
-    @PutMapping("/me")
-    @PreAuthorize("isAuthenticated()")
-    public Student updateCurrentUser(@RequestBody Student updatedStudent,
-                                     Authentication authentication) {
-
-        String email = authentication.getName();
-        Student existing = studentService.getByEmail(email);
-
-        existing.setName(updatedStudent.getName());
-        existing.setBio(updatedStudent.getBio());
-
-        return studentService.save(existing);
-    }
 }

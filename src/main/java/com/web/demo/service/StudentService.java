@@ -51,16 +51,25 @@ public class StudentService implements StudentServiceImpl {
     }
 
     @Override
-    public Student updateProfile(Long id, Student updates) {
-        Student s = studentRepository.findById(id)
+    public Student updateProfile(String email, Student updates) {
+        Student s = studentRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        s.setName(updates.getName());
-        s.setBio(updates.getBio());
-        s.setAvailableTime(updates.getAvailableTime());
-        s.setPreferredMode(updates.getPreferredMode());
+        if (updates.getName() != null) {
+            s.setName(updates.getName());
+        }
+        if (updates.getBio() != null) {
+            s.setBio(updates.getBio());
+        }
+        if (updates.getAvailableTime() != null) {
+            s.setAvailableTime(updates.getAvailableTime());
+        }
+        if (updates.getPreferredMode() != null) {
+            s.setPreferredMode(updates.getPreferredMode());
+        }
 
-        return studentRepository.save(s);
+      return studentRepository.save(s);
+      
     }
 
     @Override

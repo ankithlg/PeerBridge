@@ -19,13 +19,13 @@ public class StudentController {
         this.currentUser = currentUser;
     }
 
-//    @GetMapping("/{id}")
-//    @PreAuthorize("isAuthenticated()")
-//    public ResponseEntity<Student> getById(@PathVariable Long id) {
-//        return service.findById(id)
-//                .map(ResponseEntity::ok)
-//                .orElse(ResponseEntity.notFound().build());
-//    }
+    @GetMapping("/me") 
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Student> getProfile() {
+        String email = currentUser.getEmail();
+        Student student = service.getByEmail(email);  // Your existing method ✅
+        return ResponseEntity.ok(student);
+    }
 
     @PutMapping("/me")
     @PreAuthorize("isAuthenticated()")

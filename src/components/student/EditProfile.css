@@ -79,28 +79,49 @@
 
 .form-group label {
   margin-bottom: 0.75rem;
-  color: #e2e8f0;
+  color: #dfe2e7;
   font-weight: 600;
   font-size: 0.95rem;
   letter-spacing: 0.025em;
   text-transform: uppercase;
 }
 
+
 .form-group input,
-.form-group select,
 .form-group textarea {
   width: 100%;
   padding: 14px 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   font-size: 1rem;
-  /* color: #ffffff; */
+  color: #ffffff;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-sizing: border-box;
   /* backdrop-filter: blur(10px); */
+   background: #1e2238;
+  border: 2px solid rgba(255, 255, 255, 0.08);
 }
 
+.form-group select{
+  width: 100%;
+  padding: 14px 20px;
+  background: #1e2238;
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+
+  font-size: 1rem;
+  color: #efeaea;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+  /* backdrop-filter: blur(10px); */
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+.form-group select option {
+  background-color: #1e2238;
+  color: #ffffff;
+}
 .form-group input::placeholder,
 .form-group textarea::placeholder {
   color: #64748b;
@@ -110,12 +131,11 @@
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #6366f1;
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 
-    0 0 0 4px rgba(99, 102, 241, 0.2),
-    0 8px 25px rgba(99, 102, 241, 0.15);
   transform: translateY(-1px);
+  outline: none;
+  border-color: #6366f1;
+  background: #23284a;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
 }
 
 .form-row {

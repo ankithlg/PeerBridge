@@ -29,5 +29,9 @@ export const studentAPI = {
   updateProfile: (updates) => api.put('/student/me', updates),
 };
 
+export const skillsAPI = {
+  addTeachSkill: (skillData) => api.post('/skills/teach', skillData),
+  addLearnSkill: (skillData) => api.post('/skills/learn', skillData),
+ };
 
 export default api;

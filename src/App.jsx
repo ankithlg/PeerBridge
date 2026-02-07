@@ -4,6 +4,7 @@ import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Profile from './components/student/Profile';
 import EditProfile from './components/student/EditProfile';
+import ManageSkills from './components/student/ManageSkills';
 import './App.css';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/profile" element={<Profile />} /> 
           <Route path="/profile/edit" element={<EditProfile />} />
+           <Route path="/skills" element={<ManageSkills />} />
         </Routes>
       </div>
     </Router>

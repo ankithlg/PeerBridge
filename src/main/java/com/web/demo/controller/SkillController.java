@@ -3,7 +3,6 @@ package com.web.demo.controller;
 import com.web.demo.dto.MatchRequest;
 import com.web.demo.dto.MatchResponse;
 import com.web.demo.model.LearnSkill;
-
 import com.web.demo.model.TeachSkill;
 import com.web.demo.security.CurrentUser;
 import com.web.demo.service.StudentService;
@@ -12,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/skills")
@@ -22,7 +22,7 @@ public class SkillController {
 
     public SkillController(StudentService service, CurrentUser currentUser) {
         this.service = service;
-        this.currentUser = currentUser;
+        this.currentUser= currentUser;
     }
 
     private Long getCurrentUserId() {
@@ -37,7 +37,7 @@ public class SkillController {
         TeachSkill saved = service.addTeachSkill(email, skill);
         return ResponseEntity.ok(saved);
     }
-
+    
     @PostMapping("/learn")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<LearnSkill> addLearn(@RequestBody LearnSkill skill) {
@@ -53,4 +53,23 @@ public class SkillController {
         MatchResponse matches = service.findBestMatches(currentUserId, request);
         return ResponseEntity.ok(matches);
     }
+
+    @GetMapping("/current-user/teach")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<TeachSkill>> getCurrentUserTeachSkills() {
+        Long currentUserId = getCurrentUserId();
+        List<TeachSkill> teachSkills = service.getCurrentUserTeachSkills(currentUserId);
+        return ResponseEntity.ok(teachSkills);
+    }
+
+    @GetMapping("/current-user/learn")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<LearnSkill>> getCurrentUserLearnSkills() {
+        Long currentUserId = getCurrentUserId();
+        List<LearnSkill> learnSkills = service.getCurrentUserLearnSkills(currentUserId);
+        return ResponseEntity.ok(learnSkills);
+    }
+
+
+
 }

@@ -14,7 +14,7 @@ public interface StudentServiceImpl {
 
     Student save(Student student);
 
-    Optional<Student> findById(Long id);
+    Student findById(Long id);
 
     Student updateProfile(String email, Student updates);
 

@@ -10,6 +10,7 @@ import com.web.demo.repository.*;
 import com.web.demo.service.StudentServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.EntityNotFoundException;  
 
 import java.time.Instant;
 import java.util.List;
@@ -34,11 +35,11 @@ public class StudentService implements StudentServiceImpl {
         this.connectionRequestRepository = connectionRequestRepository;
     }
 
-    @Override
-    public Optional<Student> findById(Long id) {
-        return studentRepository.findById(id);
+    public Student findById(Long id) {
+        return studentRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Student not found: " + id));
     }
-
+    
     @Override
     public Student getByEmail(String email) {
         return studentRepository.findByEmail(email)
@@ -85,7 +86,14 @@ public class StudentService implements StudentServiceImpl {
         skill.setStudent(student);
         return learnSkillRepository.save(skill);
     }
+    
+    public List<TeachSkill> getCurrentUserTeachSkills(Long studentId) {
+        return findById(studentId).getTeachSkills().stream().toList();
+    }
 
+    public List<LearnSkill> getCurrentUserLearnSkills(Long studentId) {
+        return findById(studentId).getLearnSkills().stream().toList();
+    }
     @Override
     public List<TeachSkill> findTeachersForSkillExcludingSelf(String skillName, String studentEmail) {
         Student current = getByEmail(studentEmail);
@@ -265,4 +273,6 @@ public class StudentService implements StudentServiceImpl {
     private boolean matchesBioKeywords(String skill, String bio) {
         return bio != null && bio.toLowerCase().contains(skill.toLowerCase());
     }
+
+
 }

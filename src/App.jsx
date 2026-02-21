@@ -5,6 +5,7 @@ import Register from './components/auth/Register';
 import Profile from './components/student/Profile';
 import EditProfile from './components/student/EditProfile';
 import ManageSkills from './components/student/ManageSkills';
+import MainMatchPage from './components/student/MainMatchPage';
 import './App.css';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
           <Route path="/profile" element={<Profile />} /> 
           <Route path="/profile/edit" element={<EditProfile />} />
            <Route path="/skills" element={<ManageSkills />} />
+           <Route path="/matches" element={<MainMatchPage />} />
         </Routes>
       </div>
     </Router>

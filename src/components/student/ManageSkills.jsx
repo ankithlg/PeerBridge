@@ -3,6 +3,7 @@ import { skillsAPI } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import './ManageSkills.css';
 
+
 const ManageSkills = () => {
   const [teachSkills, setTeachSkills] = useState([]);
   const [learnSkills, setLearnSkills] = useState([]);

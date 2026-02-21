@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:9090';
+const API_BASE_URL = 'http://localhost:9099';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -32,6 +32,15 @@ export const studentAPI = {
 export const skillsAPI = {
   addTeachSkill: (skillData) => api.post('/skills/teach', skillData),
   addLearnSkill: (skillData) => api.post('/skills/learn', skillData),
+  findMatches: (searchParams) => api.post('/skills/matches', searchParams),
  };
 
+export const connectionAPI = {
+ 
+  sendRequest: (receiverId) => api.post('/connect/send', null, { params: { receiverId } }),
+  respondRequest: (requestId, status) => api.post('/connect/respond', null, { params: { requestId, status } }),
+  getStatus: (studentId) => api.get('/connect/status', { params: { student2: studentId } }),
+  removeConnection: (studentId) => api.delete('/connect/remove', { params: { student2: studentId } }),
+  getPendingRequests: () => api.get('/connect/pending-requests'),
+};
 export default api;

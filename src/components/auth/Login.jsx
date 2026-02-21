@@ -23,7 +23,7 @@ const Login = () => {
       const response = await authAPI.login(formData);
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('userId', response.data.userId);
-      navigate('/profile');
+      navigate('/matches');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
     } finally {

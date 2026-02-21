@@ -1,89 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 /* ====== Page Background ====== */
 .profile-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f0f23, #1a1a2e);
+  background: linear-gradient(135deg, #0a0a1a 0%, #0f0f23 50%, #1a1a2e 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 40px 20px;
+  font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
   color: #e2e8f0;
- 
+  position: relative;
+}
+
+/* ====== Logout Button - Fixed Top Right ====== */
+.logout-button.fixed-top-right {
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  z-index: 1000;
+  background: linear-gradient(135deg, #ff4444, #cc2222);
+  color: white;
+  border: none;
+  padding: 9px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
+  transition: all 0.2s ease;
+  letter-spacing: 0.3px;
+}
+
+.logout-button.fixed-top-right:hover {
+  background: linear-gradient(135deg, #ff2222, #aa1111);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 68, 68, 0.45);
+}
+
+.logout-button.fixed-top-right:active {
+  transform: translateY(0);
 }
 
 /* ====== Main Card ====== */
 .profile-card {
   width: 100%;
-  max-width: 800px;
-  background: rgba(20, 20, 40, 0.95);
-  border-radius: 20px;
-  padding: 28px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  max-width: 680px;
+  background: rgba(18, 18, 38, 0.97);
+  border-radius: 24px;
+  padding: 36px 40px;
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  position: relative;
 }
-
 
 /* ====== Header ====== */
 .profile-header {
   position: relative;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  justify-content: center; 
+  justify-content: center;
+  margin-bottom: 4px;
 }
 
 .profile-header h2 {
   margin: 0;
-  font-size: 2rem;
-  font-weight: bold;
+  font-size: 1.85rem;
+  font-weight: 800;
   background: linear-gradient(135deg, #00d4ff, #7b68ee);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
 }
 
 .edit-button {
   position: absolute;
   right: 0;
-  padding: 8px 14px;
+  padding: 8px 16px;
   background: linear-gradient(135deg, #00d4ff, #0099cc);
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   color: white;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   cursor: pointer;
   font-weight: 600;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: all 0.2s ease;
+  letter-spacing: 0.3px;
+}
+
+.edit-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.35);
 }
 
 /* ====== Avatar ====== */
 .profile-avatar {
   display: flex;
   justify-content: center;
-  margin: 18px 0;
+  margin: 22px 0 8px;
 }
 
 .avatar-placeholder {
-  width: 85px;
-  height: 85px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   background: linear-gradient(135deg, #00d4ff, #7b68ee);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
-  font-weight: bold;
+  font-size: 2.2rem;
+  font-weight: 800;
   color: white;
+  box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
 }
 
 /* ====== Profile Details ====== */
 .profile-details {
-  margin-bottom: 15px;
+  margin: 18px 0 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  padding: 4px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .detail-item {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  gap: 16px;
 }
 
 .detail-item:last-child {
@@ -91,34 +141,44 @@
 }
 
 .detail-item label {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: hsl(218, 13%, 88%);
-  font-weight: 500;
-  min-width: 120px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #a0aec0;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.detail-item span {
+.detail-item1 span {
   font-size: 0.95rem;
   font-weight: 600;
   text-align: right;
-  max-width: 65%;
+  color: #e2e8f0;
   word-break: break-word;
+  max-width: 60%;
 }
 
 /* ====== Skills Section ====== */
 .skills-wrapper {
-  margin-top: 20px;
+  margin-top: 24px;
   display: flex;
   flex-direction: column;
-  gap: 28px;   /* 👈 Increase this for more space */
+  gap: 20px;
 }
 
-.skill-block h4 {
-  font-size: 0.95rem;
-  margin-bottom: 6px;
-  color: #cbd5f5;
-  font-weight: 600;
+.skill-block {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 14px;
+  padding: 16px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.section-heading {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  letter-spacing: 0.3px;
+  color: #cbd5e0;
+  text-align: center;
 }
 
 .skills-inline {
@@ -129,32 +189,39 @@
 
 /* Skill Chips */
 .chip {
-  padding: 6px 12px;
-  border-radius: 10px;
+  padding: 5px 12px;
+  border-radius: 8px;
   font-size: 0.8rem;
   font-weight: 600;
+  letter-spacing: 0.2px;
+  transition: transform 0.15s ease;
+}
+
+.chip:hover {
+  transform: translateY(-1px);
 }
 
 .chip.teach {
-  background: rgba(0, 212, 255, 0.15);
-  border: 1px solid rgba(0, 212, 255, 0.35);
+  background: rgba(0, 212, 255, 0.12);
+  border: 1px solid rgba(0, 212, 255, 0.3);
   color: #00d4ff;
 }
 
 .chip.learn {
-  background: rgba(123, 104, 238, 0.15);
-  border: 1px solid rgba(123, 104, 238, 0.35);
-  color: #7b68ee;
+  background: rgba(123, 104, 238, 0.12);
+  border: 1px solid rgba(123, 104, 238, 0.3);
+  color: #9b8ff0;
 }
 
 .no-skill {
   font-size: 0.8rem;
-  color: #64748b;
+  color: #4a5568;
+  font-style: italic;
 }
 
 /* ====== Action Button ====== */
 .profile-actions {
-  margin-top: 20px;
+  margin-top: 24px;
 }
 
 .action-button {
@@ -163,13 +230,26 @@
   border-radius: 14px;
   border: none;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: all 0.2s ease;
+  letter-spacing: 0.3px;
 }
 
 .action-button.primary {
   background: linear-gradient(135deg, #00d4ff, #0099cc);
   color: white;
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.25);
+}
+
+.action-button.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
+}
+
+.action-button.primary:active {
+  transform: translateY(0);
 }
 
 /* ====== Loading & Error ====== */
@@ -178,68 +258,37 @@
   text-align: center;
   font-size: 1rem;
   margin-top: 40px;
+  color: #a0aec0;
 }
 
 .retry-button {
   margin-top: 15px;
-  padding: 10px 16px;
+  padding: 10px 20px;
   border-radius: 10px;
   border: none;
   background: #7b68ee;
   color: white;
   cursor: pointer;
-}
-
-/* Section Headings Base Style */
-.section-heading {
-  font-size: 1rem;
-  font-weight: 700;
-  margin-bottom: 10px;
-  letter-spacing: 0.5px;
- 
-}
-
-/* Teach Heading Style */
-.teach-heading {
-  /* color: #00d4ff; */
-  position: relative;
-}
-
-.teach-heading::after {
-  content: '';
-  display: block;
-  width: 50px;
-  height: 3px;
-  margin-top: 6px;
-  border-radius: 4px;
-}
-
-/* Learn Heading Style */
-.learn-heading {
-  /* color: #7b68ee; */
-  position: relative;
-}
-
-.learn-heading::after {
-  width: 50px;
-  height: 3px;
-  margin-top: 6px;
-  border-radius: 4px;
+  font-weight: 600;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 /* ====== Responsive ====== */
 @media (max-width: 600px) {
-.profile-card {
-  width: 100%;
-  max-width: 540px;
-  background: rgba(20, 20, 40, 0.95);
-  border-radius: 20px;
-  padding: 28px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-}
+  .profile-card {
+    padding: 28px 20px;
+  }
 
+  .profile-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .edit-button {
+    font-size: 0.78rem;
+    padding: 7px 11px;
+  }
 
   .detail-item span {
-    max-width: 60%;
+    max-width: 55%;
   }
 }

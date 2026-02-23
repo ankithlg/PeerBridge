@@ -61,8 +61,10 @@ const EditProfile = () => {
   return (
     <div className="edit-container">
       <div className="edit-card">
+
         <div className="edit-header">
-          <h2>Edit Profile</h2>
+         
+          <h2>👤My Profile</h2>
           <p>Update your personal information</p>
         </div>
 
@@ -121,7 +123,7 @@ const EditProfile = () => {
           <div className="form-actions">
             <button
               type="button"
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/profile')}
               className="cancel-button"
               disabled={loading}
             >

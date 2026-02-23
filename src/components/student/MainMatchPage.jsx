@@ -1,15 +1,48 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './MainMatchPage.css';
-import api from '../../services/api'; // ✅ FIXED - Same as EditProfile
+import { useNavigate } from 'react-router-dom';
+import api from '../../services/api';
+
+// Helper: get first letter of first name
+const getInitial = (name) => {
+  if (!name) return '?';
+  return name.trim().charAt(0).toUpperCase();
+};
+
+// Avatar circle using initial
+const InitialAvatar = ({ name, size = 48, onClick, style = {} }) => (
+  <div
+    onClick={onClick}
+    style={{
+      width: size,
+      height: size,
+      borderRadius: '50%',
+      backgroundColor: '#6c63ff',
+      color: '#fff',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: size * 0.4,
+      fontWeight: 'bold',
+      cursor: onClick ? 'pointer' : 'default',
+      flexShrink: 0,
+      ...style,
+    }}
+  >
+    {getInitial(name)}
+  </div>
+);
 
 const MainMatchPage = () => {
+  const navigate = useNavigate();
+
   const [searchParams, setSearchParams] = useState({
     skillName: '',
     preferredMode: 'both',
     availableTime: '',
     page: 0,
     size: 10,
-    sortBy: 'relevance'
+    sortBy: 'relevance',
   });
   const [matches, setMatches] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
@@ -19,7 +52,6 @@ const MainMatchPage = () => {
   const [showNotificationPanel, setShowNotificationPanel] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // ✅ FIXED: Use direct api calls like EditProfile
   const fetchUserProfile = useCallback(async () => {
     try {
       const response = await api.get('/student/me');
@@ -29,21 +61,24 @@ const MainMatchPage = () => {
     }
   }, []);
 
-  const fetchMatches = useCallback(async (page = 0) => {
-    setLoading(true);
-    try {
-      const params = { ...searchParams, page };
-      const response = await api.post('/skills/matches', params);
-      setMatches(response.data.matches || []);
-      setTotalPages(response.data.totalPages || 0);
-      setCurrentPage(response.data.currentPage || 0);
-    } catch (error) {
-      console.error('Error fetching matches:', error);
-      setMatches([]); // ✅ Show empty state on error
-    } finally {
-      setLoading(false);
-    }
-  }, [searchParams]);
+  const fetchMatches = useCallback(
+    async (page = 0) => {
+      setLoading(true);
+      try {
+        const params = { ...searchParams, page };
+        const response = await api.post('/skills/matches', params);
+        setMatches(response.data.matches || []);
+        setTotalPages(response.data.totalPages || 0);
+        setCurrentPage(response.data.currentPage || 0);
+      } catch (error) {
+        console.error('Error fetching matches:', error);
+        setMatches([]);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [searchParams]
+  );
 
   const fetchNotifications = useCallback(async () => {
     try {
@@ -55,7 +90,6 @@ const MainMatchPage = () => {
     }
   }, []);
 
-  // Initial load
   useEffect(() => {
     fetchUserProfile();
     fetchMatches();
@@ -105,25 +139,26 @@ const MainMatchPage = () => {
           <h1>🎯 Find Your Match</h1>
           <p>Connect with experts to learn new skills</p>
         </div>
-        
+
         <div className="profile-section">
           {userProfile ? (
             <div className="user-profile">
-              <img 
-                src={userProfile.avatar || '/default-avatar.png'} 
-                alt="Profile"
-                className="profile-avatar"
-                onError={(e) => e.target.src = '/default-avatar.png'}
+              {/* Clicking the avatar goes to /profile (current user) */}
+              <InitialAvatar
+                name={userProfile.name}
+                size={44}
+                onClick={() => navigate('/profile')}
+                style={{ border: '2px solid #fff' }}
               />
-              <div className="profile-info">
+              <div className="profile-info" style={{ cursor: 'pointer' }} onClick={() => navigate('/profile')}>
                 <span className="profile-name">{userProfile.name}</span>
                 <span className="profile-email">{userProfile.email}</span>
               </div>
-              <div 
-                className="notification-bell" 
+              <div
+                className="notification-bell"
                 onClick={() => setShowNotificationPanel(!showNotificationPanel)}
               >
-                🔔 
+                🔔
                 {notifications.length > 0 && (
                   <span className="notification-badge">{notifications.length}</span>
                 )}
@@ -143,12 +178,12 @@ const MainMatchPage = () => {
               type="text"
               placeholder="What do you want to learn? (React, Python, Java...)"
               value={searchParams.skillName}
-              onChange={(e) => setSearchParams({...searchParams, skillName: e.target.value})}
+              onChange={(e) => setSearchParams({ ...searchParams, skillName: e.target.value })}
               className="search-input"
             />
             <select
               value={searchParams.preferredMode}
-              onChange={(e) => setSearchParams({...searchParams, preferredMode: e.target.value})}
+              onChange={(e) => setSearchParams({ ...searchParams, preferredMode: e.target.value })}
               className="search-select"
             >
               <option value="both">Online/Offline</option>
@@ -159,7 +194,7 @@ const MainMatchPage = () => {
               type="text"
               placeholder="Available time (evenings, weekends...)"
               value={searchParams.availableTime}
-              onChange={(e) => setSearchParams({...searchParams, availableTime: e.target.value})}
+              onChange={(e) => setSearchParams({ ...searchParams, availableTime: e.target.value })}
               className="search-input"
             />
           </div>
@@ -174,7 +209,7 @@ const MainMatchPage = () => {
         <div className="section-header">
           <h2>🎓 Perfect Learning Matches</h2>
           <div className="pagination">
-            <button 
+            <button
               onClick={() => fetchMatches(Math.max(0, currentPage - 1))}
               disabled={currentPage === 0 || loading}
               className="pagination-btn prev"
@@ -184,7 +219,7 @@ const MainMatchPage = () => {
             <span className="page-info">
               Page {currentPage + 1} of {totalPages || 1}
             </span>
-            <button 
+            <button
               onClick={() => fetchMatches(Math.min(totalPages - 1, currentPage + 1))}
               disabled={currentPage === totalPages - 1 || loading}
               className="pagination-btn next"
@@ -230,8 +265,8 @@ const MainMatchPage = () => {
   );
 };
 
-// ✅ Keep MatchCard and NotificationPanel exactly the same
 const MatchCard = ({ match, onConnect, getStatus }) => {
+  const navigate = useNavigate();
   const [status, setStatus] = useState('none');
   const [checkingStatus, setCheckingStatus] = useState(false);
 
@@ -256,15 +291,19 @@ const MatchCard = ({ match, onConnect, getStatus }) => {
   return (
     <div className="match-card">
       <div className="match-header">
-        <div className="match-avatar">
-          <img 
-            src={match.avatar || '/default-avatar.png'} 
-            alt={match.name} 
-            onError={(e) => e.target.src = '/default-avatar.png'}
-          />
-        </div>
+        {/* Clicking avatar or name navigates to that student's profile */}
+        <InitialAvatar
+          name={match.name}
+          size={52}
+          onClick={() => navigate(`/profile/${match.id}`)}
+        />
         <div className="match-meta">
-          <h3>{match.name || 'Student'}</h3>
+          <h3
+            style={{ cursor: 'pointer', color: '#6c63ff' }}
+            onClick={() => navigate(`/profile/${match.id}`)}
+          >
+            {match.name || 'Student'}
+          </h3>
           <div className="student-stats">
             <span>⭐ 4.8 rating</span>
             <span>•</span>
@@ -284,34 +323,38 @@ const MatchCard = ({ match, onConnect, getStatus }) => {
             </span>
           )}
         </div>
-        
+
         <div className="match-details">
           <div className="detail-item">
-            <span>📱 Mode:</span> 
+            <span>📱 Mode:</span>
             <span>{match.preferredMode?.replace('both', 'Online/Offline') || 'Flexible'}</span>
           </div>
           <div className="detail-item">
-            <span>⏰ Available:</span> 
+            <span>⏰ Available:</span>
             <span>{match.availableTime || 'Flexible'}</span>
           </div>
           <div className="detail-item">
-            <span>📍 Location:</span> 
+            <span>📍 Location:</span>
             <span>{match.location || 'Remote'}</span>
           </div>
         </div>
       </div>
 
       <div className="match-actions">
-        <button 
+        <button
           className={`connect-btn ${status === 'none' ? 'primary' : status.toLowerCase()}`}
           onClick={handleConnect}
           disabled={checkingStatus || status !== 'none'}
         >
-          {checkingStatus ? '⏳ Checking...' : 
-           status === 'none' ? '📤 Send Request' :
-           status === 'PENDING' ? '⏳ Pending' :
-           status === 'ACCEPTED' ? '✅ Connected' :
-           '❌ Request Denied'}
+          {checkingStatus
+            ? '⏳ Checking...'
+            : status === 'none'
+            ? '📤 Send Request'
+            : status === 'PENDING'
+            ? '⏳ Pending'
+            : status === 'ACCEPTED'
+            ? '✅ Connected'
+            : '❌ Request Denied'}
         </button>
       </div>
     </div>
@@ -334,12 +377,23 @@ const NotificationPanel = ({ notifications, onRespond, onClose }) => (
         notifications.map((notif) => (
           <div key={notif.id} className="notification-item">
             <div className="notif-header">
-              <img 
-                src={notif.sender?.avatar || '/default-avatar.png'} 
-                alt={notif.sender?.name}
-                className="notif-avatar"
-                onError={(e) => e.target.src = '/default-avatar.png'}
-              />
+              <div
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: '50%',
+                  backgroundColor: '#6c63ff',
+                  color: '#fff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 'bold',
+                  fontSize: 16,
+                  flexShrink: 0,
+                }}
+              >
+                {notif.sender?.name?.charAt(0).toUpperCase() || '?'}
+              </div>
               <div className="notif-sender-info">
                 <div className="notif-sender-name">
                   {notif.sender?.name || 'Student'} wants to connect!
@@ -350,16 +404,10 @@ const NotificationPanel = ({ notifications, onRespond, onClose }) => (
               </div>
             </div>
             <div className="notif-actions">
-              <button 
-                className="accept-btn"
-                onClick={() => onRespond(notif.id, 'ACCEPTED')}
-              >
+              <button className="accept-btn" onClick={() => onRespond(notif.id, 'ACCEPTED')}>
                 ✅ Accept
               </button>
-              <button 
-                className="reject-btn"
-                onClick={() => onRespond(notif.id, 'REJECTED')}
-              >
+              <button className="reject-btn" onClick={() => onRespond(notif.id, 'REJECTED')}>
                 ❌ Reject
               </button>
             </div>

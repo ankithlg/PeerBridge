@@ -8,6 +8,7 @@ import ManageSkills from './components/student/ManageSkills';
 import MainMatchPage from './components/student/MainMatchPage';
 import './App.css';
 
+
 function App() {
   return (
     <Router>
@@ -16,10 +17,11 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<Navigate to="/login" />} />
-          <Route path="/profile" element={<Profile />} /> 
+          <Route path="/profile" element={<Profile />} />
           <Route path="/profile/edit" element={<EditProfile />} />
-           <Route path="/skills" element={<ManageSkills />} />
-           <Route path="/matches" element={<MainMatchPage />} />
+          <Route path="/profile/:id" element={<Profile />} />  {/* same component */}
+          <Route path="/skills" element={<ManageSkills />} />
+          <Route path="/matches" element={<MainMatchPage />} />
         </Routes>
       </div>
     </Router>
